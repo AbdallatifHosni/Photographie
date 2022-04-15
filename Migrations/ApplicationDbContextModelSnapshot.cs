@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Photography.Data;
 
 #nullable disable
 
-namespace Photography.Data.Migrations
+namespace Photography.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220413140149_Intial")]
-    partial class Intial
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,12 +27,12 @@ namespace Photography.Data.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("photographerClientId")
+                    b.Property<int>("PhotographerId")
                         .HasColumnType("int");
 
-                    b.HasKey("ClientId", "photographerClientId");
+                    b.HasKey("ClientId", "PhotographerId");
 
-                    b.HasIndex("photographerClientId");
+                    b.HasIndex("PhotographerId");
 
                     b.ToTable("ClientPhotographer");
                 });
@@ -251,38 +249,51 @@ namespace Photography.Data.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("Varchar(30)")
+                        .HasColumnName("Address");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("Varchar(35)")
+                        .HasColumnName("Email-Adress");
 
                     b.Property<string>("ImageUser")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("Varchar(25)");
+
+                    b.Property<int?>("WorkId")
+                        .HasColumnType("int");
 
                     b.HasKey("ClientId");
+
+                    b.HasIndex("WorkId");
 
                     b.ToTable("Client");
                 });
 
             modelBuilder.Entity("Photography.Models.Photographer", b =>
                 {
-                    b.Property<int>("ClientId")
+                    b.Property<int>("PhotographerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhotographerId"), 1L, 1);
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("Varchar(30)");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("Varchar(35)")
+                        .HasColumnName("Email-Adress");
 
                     b.Property<string>("ImageUser")
                         .HasColumnType("nvarchar(max)");
@@ -291,9 +302,10 @@ namespace Photography.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("bio")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("Varchar(MAX)");
 
-                    b.HasKey("ClientId");
+                    b.HasKey("PhotographerId");
 
                     b.ToTable("Photographer");
                 });
@@ -306,7 +318,11 @@ namespace Photography.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkId"), 1L, 1);
 
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("WorkId");
@@ -324,7 +340,7 @@ namespace Photography.Data.Migrations
 
                     b.HasOne("Photography.Models.Photographer", null)
                         .WithMany()
-                        .HasForeignKey("photographerClientId")
+                        .HasForeignKey("PhotographerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -378,6 +394,18 @@ namespace Photography.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Photography.Models.Client", b =>
+                {
+                    b.HasOne("Photography.Models.Work", null)
+                        .WithMany("clients")
+                        .HasForeignKey("WorkId");
+                });
+
+            modelBuilder.Entity("Photography.Models.Work", b =>
+                {
+                    b.Navigation("clients");
                 });
 #pragma warning restore 612, 618
         }

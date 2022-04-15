@@ -9,10 +9,11 @@ namespace Photography.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
-        public DbSet<Photography.Models.Client> Client { get; set; }
-        public DbSet<Photography.Models.Photographer> Photographer { get; set; }
-        public DbSet<Photography.Models.Work> Work { get; set; }
+        public DbSet<Client>? Client { get; set; }
+        public DbSet<Photographer>? Photographer { get; set; }
+        public DbSet<Work>? Work { get; set; }
 
     }
 }
